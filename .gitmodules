@@ -9,7 +9,7 @@
 	url = https://github.com/Dmitrij-Solovjev/InterpreterManager
 [submodule "lib/TinyJS"]
 	path = lib/TinyJS
-	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
+	url = https://github.com/Dmitrij-Solovjev/TinyJS
 [submodule "include/Logger.hpp"]
 	path = include/Logger.hpp
 	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
