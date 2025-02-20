@@ -1,0 +1,21 @@
+[submodule "lib/lib/FlashManager"]
+	path = lib/lib/FlashManager
+	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
+[submodule "lib/FlashManager"]
+	path = lib/FlashManager
+	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
+[submodule "lib/InterpreterManager"]
+	path = lib/InterpreterManager
+	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
+[submodule "lib/TinyJS"]
+	path = lib/TinyJS
+	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
+[submodule "include/Logger.hpp"]
+	path = include/Logger.hpp
+	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
+[submodule "include/Some_functions.hpp"]
+	path = include/Some_functions.hpp
+	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
+[submodule "lib/Messanger"]
+	path = lib/Messanger
+	url = https://github.com/Dmitrij-Solovjev/Distributed-communication-protocol
