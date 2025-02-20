@@ -1,3 +1,29 @@
+/*
+  Базовая реализация устройства. Пытаюсь "подружить" интепретатор (с обвязкой)
+  и пакетный режим передачи сообщений, а также интегрировать дистанционное
+  программирование.
+
+  Используется Serial1 для логов, PB4 для светодиода, PB3 для
+  матрицы и PB14+PB15 для кнопок. Для реализации протокола используются si4432
+  на частоте 433МГц.
+
+  В этом проекте:
+    * Используются ненастойчивый CSMA
+  https://ru.wikipedia.org/wiki/Carrier_Sense_Multiple_Access
+    * Пакет состоит из
+    *   1. 1б  -  с подтверждением или без
+    *   2. 1б  -  приоритетное или нет
+    *   3. 2б  -  тип пакета (10 - начало,
+    *                         00 - середина,
+    *                         01 - конец,
+    *                         11 - сообщение из одного пакета)
+    *   5. 4б  -  резерв.
+    *   5. 8б  -  адресс зоны отправителя.
+    *   6. 8б  -  id отправителя
+    *   7. 0-60Б -сообщение
+    *   8. 8б  -  хеш-сумма+цифровая подпись.
+*/
+
 #include <Arduino.h>
 
 #include <iostream>
@@ -17,12 +43,15 @@ InterpreterManager interpreter(logger);
 void senderTask(void *pvParameters) {
   while (1) {
     for (auto i = 0; i < 7; ++i) {
-      event led_change_trigger = {"button" + std::to_string(i%3+1), ""};
-      Serial1.println("Новое событие:" + String(led_change_trigger.trigger.c_str()));
+      event led_change_trigger = {"button" + std::to_string(i % 3 + 1), ""};
+      Serial1.println("Новое событие:" +
+                      String(led_change_trigger.trigger.c_str()));
       interpreter.enqueueTrigger(led_change_trigger);
       vTaskDelay(pdMS_TO_TICKS(25));  // Отправляем команды каждые 50ms
     }
-    while(1){vTaskDelay(pdMS_TO_TICKS(10000));};
+    while (1) {
+      vTaskDelay(pdMS_TO_TICKS(10000));
+    };
   }
 }
 
@@ -56,17 +85,17 @@ void setup() {
   interpreter.createPair(led_change_event);
 
   led_change_event = {"button2",
-                            "Serial_println(\"start thread_2\"); "
-                            "digitalWrite(LED_PIN,!digitalRead(LED_PIN)); "
-                            " delay(500); "
-                            "Serial_println(\"finish thread_2\");"};
+                      "Serial_println(\"start thread_2\"); "
+                      "digitalWrite(LED_PIN,!digitalRead(LED_PIN)); "
+                      " delay(500); "
+                      "Serial_println(\"finish thread_2\");"};
   interpreter.createPair(led_change_event);
 
   led_change_event = {"button3",
-                            "Serial_println(\"start thread_3\"); "
-                            "digitalWrite(LED_PIN,!digitalRead(LED_PIN)); "
-                            " delay(50); "
-                            "Serial_println(\"finish thread_3\");"};
+                      "Serial_println(\"start thread_3\"); "
+                      "digitalWrite(LED_PIN,!digitalRead(LED_PIN)); "
+                      " delay(50); "
+                      "Serial_println(\"finish thread_3\");"};
 
   interpreter.createPair(led_change_event);
 
