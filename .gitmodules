@@ -3,10 +3,10 @@
 	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
 [submodule "lib/FlashManager"]
 	path = lib/FlashManager
-	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
+	url = https://github.com/Dmitrij-Solovjev/FlashManager
 [submodule "lib/InterpreterManager"]
 	path = lib/InterpreterManager
-	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
+	url = https://github.com/Dmitrij-Solovjev/InterpreterManager
 [submodule "lib/TinyJS"]
 	path = lib/TinyJS
 	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
@@ -18,4 +18,4 @@
 	url = https://github.com/Dmitrij-Solovjev/FlashManager-and-InterpreterManager
 [submodule "lib/Messanger"]
 	path = lib/Messanger
-	url = https://github.com/Dmitrij-Solovjev/Distributed-communication-protocol
+	url = https://github.com/Dmitrij-Solovjev/Messanger
