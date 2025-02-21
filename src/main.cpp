@@ -17,7 +17,7 @@
     *                         00 - середина,
     *                         01 - конец,
     *                         11 - сообщение из одного пакета)
-    *   5. 4б  -  резерв.
+    *   5. 4б  -  резерв. (возможно использовать тип пакета: sett/ctrl/log/time)
     *   5. 8б  -  адресс зоны отправителя.
     *   6. 8б  -  id отправителя
     *   7. 0-60Б -сообщение
@@ -27,15 +27,26 @@
 #include <Arduino.h>
 
 #include <iostream>
+#include <RadioLib.h>
+#include <STM32FreeRTOS.h>
 
 #include "InterpreterManager.hpp"
 #include "Logger.hpp"
+#include "Messanger.hpp"
 #include "Some_functions.hpp"
+
+// Si4432 has the following connections:
+#define CS PA4    // chip select (nSEL)
+#define NIQR PA3  // прерывание при получении сообщения
+#define SDN PA2   // Режим сна (0 - сон)
+
 
 int counter = 0;
 
 // Глобальный логгер
 Logger logger(&Serial1, level_of_detail::ALL);
+
+Messanger messanger(1, 1, CS, NIQR, SDN);
 
 // InterpreterManager interpreter;
 InterpreterManager interpreter(logger);
@@ -67,14 +78,15 @@ void setup() {
   CTinyJS *js = new CTinyJS();
   // Регистрируем функции
   interpreter.setJSInterpreter(js);
+  {
+    js->addNative("function digitalRead(pin)", js_digitalRead, 0);
+    js->addNative("function digitalWrite(pin, value)", js_digitalWrite, 0);
+    js->addNative("function delay(ms)", js_delay, 0);
+    js->addNative("function Serial_println(text)", js_Serial_println, 0);
 
-  js->addNative("function digitalRead(pin)", js_digitalRead, 0);
-  js->addNative("function digitalWrite(pin, value)", js_digitalWrite, 0);
-  js->addNative("function delay(ms)", js_delay, 0);
-  js->addNative("function Serial_println(text)", js_Serial_println, 0);
-
-  js->execute(("LED_PIN=" + String(LED_PIN) + ";").c_str());
-
+    js->execute(("LED_PIN=" + String(LED_PIN) + ";").c_str());
+  }
+  
   Serial1.println("Попытка создать пару");
 
   event led_change_event = {"button1",
@@ -103,6 +115,15 @@ void setup() {
   xTaskCreate(senderTask, "SenderTask", 2048, NULL, 1, NULL);
 
   // digitalWrite(LED_PIN, HIGH);
+
+  String text =
+      "Whether he's a cousin, be it a friend, until a man is in love freely to \
+      the lady enters it, and easily and techniques. But we need only him to \
+      fall in love he rarely visits the house. He... he even said with \
+      difficulty. He is timid, he is afraid.";
+  
+  messanger.ISend(text);
+
 
   vTaskStartScheduler();
 }
