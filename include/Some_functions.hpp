@@ -8,6 +8,10 @@
 #define BUT2_PIN PB15
 #define LED_MATRIX_PIN PB3
 
+// Si4432 has the following connections:
+#define CS PA4   // chip select (nSEL)
+#define NIQR PA3 // прерывание при получении сообщения
+#define SDN PA2  // Режим сна (0 - сон)
 
 
 // Функция-обертка для digitalRead, совместимая с TinyJS
