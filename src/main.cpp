@@ -95,6 +95,7 @@ void vMainTask(void *pvParameters) {
   while (true) {
     if (to_transmit_flag and !to_recieve_flag) {
       logger.log(level_of_detail::MAIN, "MAIN", "Recieved: " + onRecieveBuffer);
+      interpreter.interpret_it_however_you_want(onRecieveBuffer);
       onRecieveBuffer = "";
       to_transmit_flag = false;
     }
@@ -130,13 +131,11 @@ void setup() {
   // text = "Hello world!";
   //messanger.ISend(text);
 
-  //xTaskCreate(vMainTask, "loop like vMainTask", 2048, NULL, 2, NULL);
-  //xTaskCreate(SerialTask, "SerRead. and Trasfer Task", 2048, NULL, 2, NULL);
 
   js->execute(("LED_PIN=" + String(LED_PIN) + ";").c_str());
 
   Serial1.println("Попытка создать пару");
-
+/*
   String led_change_event = {
       "12344321+|button_fast$"
       "Serial_println(\"start thread_1\"); "
@@ -157,12 +156,14 @@ void setup() {
       "Serial_println(\"finish thread_2\");"};
 
   interpreter.interpret_it_however_you_want(led_change_event);
-
+xTaskCreate(senderTask, "SenderTask", 2048, NULL, 1, NULL);
   // led_change_event = {"12344321c|button_slow", ""};
   // interpreter.interpret_it_however_you_want(led_change_event);
-
+*/
+  
   Serial1.println("Запуск задачи");
-  xTaskCreate(senderTask, "SenderTask", 2048, NULL, 1, NULL);
+  xTaskCreate(vMainTask, "loop like vMainTask", 2048, NULL, 2, NULL);
+  xTaskCreate(SerialTask, "SerRead. and Trasfer Task", 2048, NULL, 2, NULL);
 
   vTaskStartScheduler();
 }
