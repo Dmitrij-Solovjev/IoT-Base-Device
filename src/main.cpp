@@ -28,11 +28,14 @@
 #include <RadioLib.h>
 #include <STM32FreeRTOS.h>
 
+#include <iostream>
+
+#include "InterpreterManager.hpp"
 #include "Logger.hpp"
 #include "Messanger.hpp"
 #include "Some_functions.hpp"
 
-static Logger logger(&Serial, level_of_detail::MAIN);
+static Logger logger(&Serial, level_of_detail::ALL);
 Messanger messanger(logger);
 
 int transmissionState;
@@ -41,6 +44,24 @@ String serialData = "";  // Глобальная переменная для х�
 String onRecieveBuffer = "";
 bool to_transmit_flag = false;
 bool to_recieve_flag = false;
+
+// InterpreterManager interpreter;
+InterpreterManager interpreter(logger);
+
+void senderTask(void *pvParameters) {
+  while (1) {
+    for (auto i = 0; i < 10; ++i) {
+      String led_change_trig =
+          i % 2 == 0 ? "12344321e|button_slow$" : "12344321e|button_fast$";
+      Serial1.println("Новое событие:" + led_change_trig);
+
+      interpreter.interpret_it_however_you_want(led_change_trig);
+
+      // vTaskDelay(pdMS_TO_TICKS(25));  // Отправляем команды каждые 50ms
+    }
+    while (1) vTaskDelay(pdMS_TO_TICKS(10000));
+  }
+}
 
 void SerialTask(void *pvParameters) {
   UNUSED(pvParameters);
@@ -88,6 +109,14 @@ void setup() {
 
   delay(5000);
 
+  interpreter.initialRead();
+  interpreter.clear_event();
+
+  CTinyJS *js = new CTinyJS();
+  // Регистрируем функции
+  interpreter.setJSInterpreter(js);
+  add_native_functions(js);
+
   messanger.init(1, CS, NIQR, SDN);
   messanger.SetMessageReceivedAction(vOnMessageReceive);
 
@@ -99,10 +128,41 @@ void setup() {
       "difficulty. He is timid, he is afraid.";
 
   // text = "Hello world!";
-  messanger.ISend(text);
+  //messanger.ISend(text);
 
-  xTaskCreate(vMainTask, "loop like vMainTask", 2048, NULL, 2, NULL);
-  xTaskCreate(SerialTask, "SerRead. and Trasfer Task", 2048, NULL, 2, NULL);
+  //xTaskCreate(vMainTask, "loop like vMainTask", 2048, NULL, 2, NULL);
+  //xTaskCreate(SerialTask, "SerRead. and Trasfer Task", 2048, NULL, 2, NULL);
+
+  js->execute(("LED_PIN=" + String(LED_PIN) + ";").c_str());
+
+  Serial1.println("Попытка создать пару");
+
+  String led_change_event = {
+      "12344321+|button_fast$"
+      "Serial_println(\"start thread_1\"); "
+      "for (var i = 0; i < 20; i++) {"
+      "  digitalWrite(LED_PIN,!digitalRead(LED_PIN)); "
+      "  delay(100); "
+      "}"
+      "Serial_println(\"finish thread_1\");"};
+  interpreter.interpret_it_however_you_want(led_change_event);
+
+  led_change_event = {
+      "12344321+|button_slow$"
+      "Serial_println(\"start thread_2\"); "
+      "for (var i = 0; i < 4; i++) {"
+      "  digitalWrite(LED_PIN,!digitalRead(LED_PIN)); "
+      "  delay(500); "
+      "}"
+      "Serial_println(\"finish thread_2\");"};
+
+  interpreter.interpret_it_however_you_want(led_change_event);
+
+  // led_change_event = {"12344321c|button_slow", ""};
+  // interpreter.interpret_it_however_you_want(led_change_event);
+
+  Serial1.println("Запуск задачи");
+  xTaskCreate(senderTask, "SenderTask", 2048, NULL, 1, NULL);
 
   vTaskStartScheduler();
 }
@@ -110,54 +170,8 @@ void setup() {
 void loop() {}
 
 /*
-#include <Arduino.h>
-
-#include <iostream>
-
-#include "InterpreterManager.hpp"
-#include "Logger.hpp"
-#include "Some_functions.hpp"
-
-int counter = 0;
-
-// Глобальный логгер
-Logger logger(&Serial1, level_of_detail::ALL);
-
-// InterpreterManager interpreter;
-InterpreterManager interpreter(logger);
-
-void senderTask(void *pvParameters) {
-  while (1) {
-    for (auto i = 0; i < 10; ++i) {
-      event led_change_trig = {i % 2 == 0 ? "12344321e|button_slow" : "12344321e|button_fast", ""};
-      Serial1.println("Новое событие:" +
-                      String(led_change_trig.trigger.c_str()));
-
-      interpreter.interpret_it_however_you_want(led_change_trig);
-
-      // vTaskDelay(pdMS_TO_TICKS(25));  // Отправляем команды каждые 50ms
-    }
-    while (1) vTaskDelay(pdMS_TO_TICKS(10000));
-  }
-}
 
 void setup() {
-  Serial1.begin(115200);
-  delay(5000);
-
-  interpreter.initialRead();
-  interpreter.clear_event();
-
-  pinMode(LED_PIN, OUTPUT);
-
-  CTinyJS *js = new CTinyJS();
-  // Регистрируем функции
-  interpreter.setJSInterpreter(js);
-
-  js->addNative("function digitalRead(pin)", js_digitalRead, 0);
-  js->addNative("function digitalWrite(pin, value)", js_digitalWrite, 0);
-  js->addNative("function delay(ms)", js_delay, 0);
-  js->addNative("function Serial_println(text)", js_Serial_println, 0);
 
   js->execute(("LED_PIN=" + String(LED_PIN) + ";").c_str());
 

@@ -36,7 +36,16 @@ inline void js_delay(CScriptVar *c, void *userdata) {
 
 // Функция-обертка для Serial.print, совместимая с TinyJS
 inline void js_Serial_println(CScriptVar *c, void *userdata) {
+  Logger *logger = (Logger *)userdata;
   std::string text =
       c->getParameter("text")->getString();  // Получаем строку для печати
-  Serial1.println(String(text.c_str()) + " at " + String(millis()));
+  //Serial1.println(String(text.c_str()) + " at " + String(millis()));
+  //logger->log(level_of_detail::MAIN, "INTERPR:"+String(millis()), text.c_str());
+}
+
+void add_native_functions(CTinyJS *js){
+  js->addNative("function digitalRead(pin)", js_digitalRead, 0);
+  js->addNative("function digitalWrite(pin, value)", js_digitalWrite, 0);
+  js->addNative("function delay(ms)", js_delay, 0);
+  js->addNative("function Serial_println(text)", js_Serial_println, 0);
 }
