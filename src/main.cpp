@@ -111,7 +111,7 @@ void setup() {
   delay(5000);
 
   interpreter.initialRead();
-  interpreter.clear_event();
+  //interpreter.clear_event();
 
   CTinyJS *js = new CTinyJS();
   // Регистрируем функции
@@ -133,9 +133,9 @@ void setup() {
 
 
   js->execute(("LED_PIN=" + String(LED_PIN) + ";").c_str());
-
-  Serial1.println("Попытка создать пару");
 /*
+  Serial1.println("Попытка создать пару");
+
   String led_change_event = {
       "12344321+|button_fast$"
       "Serial_println(\"start thread_1\"); "
