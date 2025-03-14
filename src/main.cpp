@@ -25,6 +25,7 @@
 */
 
 #include <Arduino.h>
+#include <CRC.h>
 #include <RadioLib.h>
 #include <STM32FreeRTOS.h>
 
@@ -74,7 +75,7 @@ void setup() {
   delay(5000);
 
   interpreter.initialRead();
-  //interpreter.clear_event();
+  // interpreter.clear_event();
 
   CTinyJS *js = new CTinyJS();
   // Регистрируем функции
@@ -85,13 +86,12 @@ void setup() {
   messanger.SetMessageReceivedAction(vOnMessageReceive);
 
   js->execute(("LED_PIN=" + String(LED_PIN) + ";").c_str());
-  
+
   Serial1.println("Запуск задачи");
   xTaskCreate(vMainTask, "loop like vMainTask", 2048, NULL, 2, NULL);
 
   String message = "Ok!";
   messanger.ISend(message);
-
 
   vTaskStartScheduler();
 }
