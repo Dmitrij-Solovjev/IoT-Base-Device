@@ -56,4 +56,8 @@ void add_native_functions(CTinyJS *js, Logger *logger,
   js->addNative("function Serial_println(text)", js_Serial_println,
                 (void *)logger);
   js->addNative("function DELETE_ALL()", js_delete_all, (void *)interpreter);
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(NIQR, INPUT_PULLUP);
+  pinMode(BUT1_PIN, INPUT);
+  pinMode(BUT2_PIN, INPUT);
 }

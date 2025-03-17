@@ -70,8 +70,6 @@ void vMainTask(void *pvParameters) {
 
 void setup() {
   Serial.begin(115200);
-  pinMode(LED_PIN, OUTPUT);
-  pinMode(NIQR, INPUT_PULLUP);
   delay(5000);
 
   interpreter.initialRead();
