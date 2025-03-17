@@ -19,6 +19,3 @@
 [submodule "lib/Messanger"]
 	path = lib/Messanger
 	url = https://github.com/Dmitrij-Solovjev/Messanger
-[submodule "lib/Radiolib"]
-	path = lib/Radiolib
-	url = https://github.com/jgromes/RadioLib
