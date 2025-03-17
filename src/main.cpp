@@ -59,7 +59,7 @@ void vMainTask(void *pvParameters) {
   while (true) {
     if (to_transmit_flag) {
       logger.log(level_of_detail::MAIN, "MAIN", "Recieved: " + onRecieveBuffer);
-      vTaskDelay(500);
+      //vTaskDelay(500);
       interpreter.interpret_it_however_you_want(onRecieveBuffer);
       onRecieveBuffer = "";
       to_transmit_flag = false;
@@ -86,7 +86,7 @@ void setup() {
   js->execute(("LED_PIN=" + String(LED_PIN) + ";").c_str());
 
   Serial1.println("Запуск задачи");
-  xTaskCreate(vMainTask, "loop like vMainTask", 2048, NULL, 2, NULL);
+  xTaskCreate(vMainTask, "loop like vMainTask", 5000, NULL, 2, NULL);
 
   String message = "Ok!";
   messanger.ISend(message);
