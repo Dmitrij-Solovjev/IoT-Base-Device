@@ -44,7 +44,6 @@ int transmissionState;
 String serialData = "";  // Глобальная переменная для хранения данных
 String onRecieveBuffer = "";
 bool to_transmit_flag = false;
-bool to_recieve_flag = false;
 
 // InterpreterManager interpreter;
 InterpreterManager interpreter(logger);
@@ -58,13 +57,13 @@ void vMainTask(void *pvParameters) {
   UNUSED(pvParameters);
 
   while (true) {
-    if (to_transmit_flag and !to_recieve_flag) {
+    if (to_transmit_flag) {
       logger.log(level_of_detail::MAIN, "MAIN", "Recieved: " + onRecieveBuffer);
       interpreter.interpret_it_however_you_want(onRecieveBuffer);
       onRecieveBuffer = "";
       to_transmit_flag = false;
     }
-    vTaskDelay(150);
+    vTaskDelay(500);
   }
 }
 
