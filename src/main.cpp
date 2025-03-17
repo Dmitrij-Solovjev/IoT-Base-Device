@@ -42,13 +42,13 @@ Messanger messanger(logger);
 int transmissionState;
 
 String serialData = "";  // Глобальная переменная для хранения данных
-String onRecieveBuffer = "";
-bool to_transmit_flag = false;
+static String onRecieveBuffer = "";
+static bool to_transmit_flag = false;
 
 // InterpreterManager interpreter;
 InterpreterManager interpreter(logger);
 
-void vOnMessageReceive(void *pvParameters) {
+static void vOnMessageReceive(void *pvParameters) {
   onRecieveBuffer = *((String *)pvParameters);
   to_transmit_flag = true;
 }
@@ -59,6 +59,7 @@ void vMainTask(void *pvParameters) {
   while (true) {
     if (to_transmit_flag) {
       logger.log(level_of_detail::MAIN, "MAIN", "Recieved: " + onRecieveBuffer);
+      vTaskDelay(500);
       interpreter.interpret_it_however_you_want(onRecieveBuffer);
       onRecieveBuffer = "";
       to_transmit_flag = false;
@@ -89,6 +90,9 @@ void setup() {
 
   String message = "Ok!";
   messanger.ISend(message);
+  digitalWrite(LED_PIN, HIGH);
+  delay(500);
+  digitalWrite(LED_PIN, LOW);
 
   vTaskStartScheduler();
 }
