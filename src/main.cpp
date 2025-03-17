@@ -64,7 +64,7 @@ void vMainTask(void *pvParameters) {
       onRecieveBuffer = "";
       to_transmit_flag = false;
     }
-    vTaskDelay(500);
+    vTaskDelay(150);
   }
 }
 
