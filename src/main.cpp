@@ -90,12 +90,7 @@ void setup() {
 
   String message = "Ok!";
   messanger.ISend(message);
-  digitalWrite(LED_PIN, HIGH);
-  delay(500);
-  digitalWrite(LED_PIN, LOW);
-
-  interpreter.interpret_it_however_you_want("Hello world!");
-
+  
   vTaskStartScheduler();
 }
 
