@@ -94,6 +94,8 @@ void setup() {
   delay(500);
   digitalWrite(LED_PIN, LOW);
 
+  interpreter.interpret_it_however_you_want("Hello world!");
+
   vTaskStartScheduler();
 }
 
